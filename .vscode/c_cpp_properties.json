@@ -1,0 +1,36 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Source/*",
+                "/Users/filipi/opt/miniconda3/include/python3.7m/*",
+                "/Users/filipi/opt/miniconda3/envs/fieldsEvolution/lib/python3.7/site-packages/numpy/core/include"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "compilerArgs": [
+                "-g",
+                "-std=c11",
+                "-m64",
+                "-Wall",
+                "-Wno-unused-function",
+                "-Wno-deprecated-declarations",
+                "-O3",
+                "-fvisibility=hidden",
+                "-funroll-loops",
+                "-fstrict-aliasing",
+                "-lm",
+                "-D OSX"
+            ]
+        }
+    ],
+    "version": 4
+}

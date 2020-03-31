@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "arrayobject.h": "c",
+    "__locale": "c",
+    "bitset": "c",
+    "locale": "c"
+  }
+}
