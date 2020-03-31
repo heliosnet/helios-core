@@ -218,14 +218,19 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	float *positionsArray;
 	float *speedsArray;
 	CVIndex *edgesArray;
-	
+	float attractiveConstant = -1;
+	float repulsiveConstant = -1;
+	float viscosityConstant = -1;
 	CVIndex i,j,n;
 	
 	/* Parse tuples separately since args will differ between C fcns */
-	if (!PyArg_ParseTuple(args, "O!O!O!",
+	if (!PyArg_ParseTuple(args, "O!O!O!|fff",
 			&PyArray_Type, &edges,
 			&PyArray_Type, &positions,
-			&PyArray_Type, &speeds
+			&PyArray_Type, &speeds,
+			&attractiveConstant,
+			&repulsiveConstant,
+			&viscosityConstant
 		)){
 			return NULL;
 		}
@@ -267,8 +272,16 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 		positionsArray[i]=10*positionsArray[i];
 	}
 
-	CVNetworkIteratePositions(edgesArray,positionsArray, speedsArray, edgesCount, vertexCount, 2);
+	// void CVNetworkIteratePositions(edgesArray,positionsArray,
+	// 	speedsArray, edgesCount, vertexCount, 2,
+	// 	attractiveConstant,
+	// 	repulsiveConstant,
+	// 	viscosityConstant);
 
+	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
+	edgesCount, vertexCount, 2,
+	attractiveConstant,repulsiveConstant,viscosityConstant);
+		
 	return Py_BuildValue("i", 1);
 }
 

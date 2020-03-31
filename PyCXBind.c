@@ -3,7 +3,7 @@
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
 #include <numpy/arrayobject.h>
 
-char rewirefunc_docs[] = "Rewire network.";
+char rewirefunc_docs[] = "Layout network.";
 char randomSeedfunc_docs[] = "Rewire network.";
 char randomSeedDevfunc_docs[] = "Rewire network.";
 

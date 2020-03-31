@@ -231,15 +231,17 @@ static void CVNetworkIteratePositions_implementation(CVFloat attractiveForce, CV
 }
 
 
-#define k_CVDefaultAttractionConstant 0.0001
-#define k_CVDefaultRepulsiveConstant 0.1
-#define k_CVDefaultViscosityConstant 0.1
-#define k_CVDefaultSofteningConstant 2.0
+#define k_CVDefaultAttractionConstant 0.0001f
+#define k_CVDefaultRepulsiveConstant 0.1f
+#define k_CVDefaultViscosityConstant 0.1f
+#define k_CVDefaultSofteningConstant 2.0f
 
-void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR, CVSize edgesCount, CVSize verticesCount, CVSize iterations){
-	CVFloat attractiveConstant = k_CVDefaultAttractionConstant;
-	CVFloat repulsiveConstant = k_CVDefaultRepulsiveConstant;
-	CVFloat viscosityConstant = k_CVDefaultViscosityConstant;
+void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR,
+	CVSize edgesCount, CVSize verticesCount, CVSize iterations,
+	CVFloat attractiveConstant,CVFloat repulsiveConstant,CVFloat viscosityConstant){
+	if (attractiveConstant < 0.0f) attractiveConstant = k_CVDefaultAttractionConstant;
+	if (repulsiveConstant < 0.0f) repulsiveConstant = k_CVDefaultRepulsiveConstant;
+	if (viscosityConstant < 0.0f) viscosityConstant = k_CVDefaultViscosityConstant;
 	CVFloat softeningConstant = k_CVDefaultSofteningConstant;
 	for(CVIndex i=0;i<iterations;i++){
 		CVNetworkIteratePositions_implementation(attractiveConstant, repulsiveConstant, viscosityConstant, softeningConstant,

@@ -28,11 +28,11 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-	name="helios",
+	name="helios-python",
 	version="0.1",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
-	description="Experimental library to analyze complex networks",
+	description="Experimental library to visualize complex networks",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
 	url="https://github.com/heliosnet/helios-core",
