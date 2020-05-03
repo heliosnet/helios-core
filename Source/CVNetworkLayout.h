@@ -1,4 +1,3 @@
-
 #ifndef CVNetwork_CVNetworkLayout_h
 #define CVNetwork_CVNetworkLayout_h
 

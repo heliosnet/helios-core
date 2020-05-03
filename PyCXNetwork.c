@@ -5,7 +5,6 @@
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
 #include <numpy/arrayobject.h>
-#include <threads.h>
 
 
 // CVNetwork* PyCXNewNetwork(PyObject* edgesList, CVBool directed){
