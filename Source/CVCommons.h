@@ -37,7 +37,7 @@
 #define CV_ENABLE_PARALLELISM 1
 #endif //_OPENMP
 
-#define kCVDefaultParallelBlocks 8
+#define kCVDefaultParallelBlocks 1024
 
 #if !defined(CV_INLINE)
 #if defined(EMSCRIPTEN)
@@ -958,7 +958,7 @@ dispatch_release(__##loopName##AsyncQueue);
 
 
 #elif CV_USE_OPENMP
-
+#warning "OPENMP ENABLED"
 #include <omp.h>
 #define CV_USE_OPENMP 1
 #define CV_ENABLE_PARALLELISM 1

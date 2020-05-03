@@ -1,7 +1,6 @@
 
 #include <CVNetwork.h>
 
-
 // static inline void __recenterNetworkPositions(float* Rx,float* Ry,float* Rz,CVSize count){
 // 	double aRMx=0;
 // 	double aRMy=0;

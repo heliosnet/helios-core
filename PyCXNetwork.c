@@ -5,6 +5,7 @@
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
 #include <numpy/arrayobject.h>
+#include <threads.h>
 
 
 // CVNetwork* PyCXNewNetwork(PyObject* edgesList, CVBool directed){
@@ -208,7 +209,24 @@ PyObject *PyCXRandomSeedDev(PyObject* self, PyObject* args){
 	Py_RETURN_NONE;
 }
 
+typedef struct PyCXNetwork{
+	CVIndex* edges;
+	float* R;
+	float* dR;
+	CVSize edgesCount;
+	CVSize verticesCount;
+	CVSize iterations;
+	CVFloat attractiveConstant;
+	CVFloat repulsiveConstant;
+	CVFloat viscosityConstant;
+} iterateParameters;
 
+void _iterate(iterateParameters* par){
+	CVNetworkIteratePositions(par->edges, par->R, par->dR,
+	par->edgesCount, par->verticesCount, par->iterations,
+	par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant)
+	thrd_exit(0);
+}
 
 
 PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
@@ -271,17 +289,30 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	for ( i=0; i<n; i++)  {
 		positionsArray[i]=10*positionsArray[i];
 	}
+	iterateParameters par;
 
+	par.edges = edgesArray;
+	par.R = positionsArray;
+	par.dR = speedsArray;
+	par.edgesCount = edgesCount;
+	par.verticesCount = vertexCount;
+	par.iterations = 50000;
+	par.attractiveConstant = attractiveConstant;
+	par.repulsiveConstant = repulsiveConstant;
+	par.viscosityConstant = viscosityConstant;
+	
 	// void CVNetworkIteratePositions(edgesArray,positionsArray,
 	// 	speedsArray, edgesCount, vertexCount, 2,
 	// 	attractiveConstant,
 	// 	repulsiveConstant,
 	// 	viscosityConstant);
-
-	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
-	edgesCount, vertexCount, 2,
-	attractiveConstant,repulsiveConstant,viscosityConstant);
+	
+	// CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
+	// edgesCount, vertexCount, 2,
+	// attractiveConstant,repulsiveConstant,viscosityConstant);
 		
+	thrd_t tid;
+	thrd_create(&tid, _iterate, par);
 	return Py_BuildValue("i", 1);
 }
 
