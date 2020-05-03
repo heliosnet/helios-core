@@ -224,7 +224,7 @@ void _iterate(iterateParameters* par){
 	CVNetworkIteratePositions(par->edges, par->R, par->dR,
 	par->edgesCount, par->verticesCount, par->iterations,
 	par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant)
-	thrd_exit(0);
+	// thrd_exit(0);
 }
 
 
@@ -306,12 +306,12 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	// 	repulsiveConstant,
 	// 	viscosityConstant);
 	
-	// CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
-	// edgesCount, vertexCount, 2,
-	// attractiveConstant,repulsiveConstant,viscosityConstant);
+	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
+	edgesCount, vertexCount, 2,
+	attractiveConstant,repulsiveConstant,viscosityConstant);
 		
-	thrd_t tid;
-	thrd_create(&tid, _iterate, par);
+	// thrd_t tid;
+	// thrd_create(&tid, _iterate, par);
 	return Py_BuildValue("i", 1);
 }
 
