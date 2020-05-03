@@ -223,7 +223,7 @@ typedef struct PyCXNetwork{
 void _iterate(iterateParameters* par){
 	CVNetworkIteratePositions(par->edges, par->R, par->dR,
 	par->edgesCount, par->verticesCount, par->iterations,
-	par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant)
+	par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant);
 	// thrd_exit(0);
 }
 
