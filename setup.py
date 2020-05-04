@@ -79,6 +79,7 @@ setup(
 				"-funroll-loops",
 				"-fstrict-aliasing"
 			]+extraOptions,
+			extra_link_args=extraLinkOptions,
 		),
 	]
 );
