@@ -34,7 +34,7 @@ with open("README.md", "r") as fh:
 
 setup(
 	name="helios-python",
-	version="0.1.1",
+	version="0.1.3",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	description="Experimental library to visualize complex networks",
