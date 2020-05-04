@@ -2,9 +2,10 @@ import numpy as np
 
 import helios
 
+networkSize = 1000;
 
-positions = np.array([[1,2,3],[4,5,6],[7,8,9],[10,11,12]],dtype=np.float32);
-edges = np.array([[0,1],[2,3]],dtype=np.uint64);
+positions = np.random.random((networkSize, 3));
+edges = np.random.randint(0,networkSize-1,(networkSize, 2));
 
 positions = np.ascontiguousarray(positions,dtype=np.float32);
 edges = np.ascontiguousarray(edges,dtype=np.uint64);

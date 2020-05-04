@@ -6,6 +6,8 @@ import platform;
 import numpy as np;
 enableParallelism = True;
 
+extraOptions = []
+extraLinkOptions=[]
 if(platform.system()=="Darwin"):
 	extraOptions = ["-D OSX"];
 	if(enableParallelism):
@@ -13,14 +15,17 @@ if(platform.system()=="Darwin"):
 elif(platform.system()=="Windows"):
 	extraOptions = ["-D WIN32"];
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
+		extraLinkOptions+=["-lgomp"];
 elif(platform.system()=="Linux"):
 	extraOptions = ["-D Linux","-D_GNU_SOURCE=1"];
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
+		extraLinkOptions+=["-lgomp"];
 else:
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
+		extraLinkOptions+=["-lgomp"];
 
 import setuptools
 
@@ -29,7 +34,7 @@ with open("README.md", "r") as fh:
 
 setup(
 	name="helios-python",
-	version="0.1",
+	version="0.1.1",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	description="Experimental library to visualize complex networks",
@@ -74,6 +79,7 @@ setup(
 				"-funroll-loops",
 				"-fstrict-aliasing"
 			]+extraOptions,
+			extra_link_args=extraLinkOptions,
 		),
 	]
 );
