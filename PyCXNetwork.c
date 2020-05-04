@@ -312,9 +312,9 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	// edgesCount, vertexCount, 2,
 	// attractiveConstant,repulsiveConstant,viscosityConstant);
 		
-	#if CV_USE_OPENMP
-    omp_set_num_threads(8);
-	#endif //_OPENMP
+	// #if CV_USE_OPENMP
+  //   omp_set_num_threads(8);
+	// #endif //_OPENMP
 	
 	CVParallelForStart(oioioi,index,vertexCount){
 		printf("Start: %d\n",(int)index);

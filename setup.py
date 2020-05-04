@@ -6,6 +6,8 @@ import platform;
 import numpy as np;
 enableParallelism = True;
 
+extraOptions = []
+extraLinkOptions=[]
 if(platform.system()=="Darwin"):
 	extraOptions = ["-D OSX"];
 	if(enableParallelism):
@@ -13,14 +15,17 @@ if(platform.system()=="Darwin"):
 elif(platform.system()=="Windows"):
 	extraOptions = ["-D WIN32"];
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
+		extraLinkOptions+=["-lgomp"];
 elif(platform.system()=="Linux"):
 	extraOptions = ["-D Linux","-D_GNU_SOURCE=1"];
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
+		extraLinkOptions+=["-lgomp"];
 else:
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
+		extraLinkOptions+=["-lgomp"];
 
 import setuptools
 
