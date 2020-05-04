@@ -308,21 +308,14 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	// 	repulsiveConstant,
 	// 	viscosityConstant);
 	
-	// CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
-	// edgesCount, vertexCount, 2,
-	// attractiveConstant,repulsiveConstant,viscosityConstant);
-		
-	// #if CV_USE_OPENMP
-  //   omp_set_num_threads(8);
-	// #endif //_OPENMP
+	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
+	edgesCount, vertexCount, 2,
+	attractiveConstant,repulsiveConstant,viscosityConstant);
 	
-	CVParallelForStart(oioioi,index,vertexCount){
-		printf("Start: %d\n",(int)index);
-		for(CVIndex i=0;i<index*vertexCount*10000000;i++){
-			positionsArray[index]+=positionsArray[i%vertexCount]*0.05;
-		}
-		printf("Finished: %d\n",(int)index);
-	}CVParallelForEnd(oioioi);
+	// #if CV_USE_OPENMP
+	//   omp_set_num_threads(8);
+	// #endif //_OPENMP
+
 	// thrd_t tid;
 	// thrd_create(&tid, _iterate, par);
 	return Py_BuildValue("i", 1);
