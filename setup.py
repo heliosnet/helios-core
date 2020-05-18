@@ -33,8 +33,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-	name="helios-python",
-	version="0.1.3",
+	name="helios",
+	version="0.1.5",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	description="Experimental library to visualize complex networks",
