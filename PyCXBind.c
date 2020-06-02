@@ -3,7 +3,9 @@
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
 #include <numpy/arrayobject.h>
 
-char rewirefunc_docs[] = "Layout network.";
+char layoutfunc_docs[] = "Layout network.";
+char asyncLayoutStart[] = "Async Layout network start.";
+char asyncLayoutStop[] = "Async Layout network stop.";
 char randomSeedfunc_docs[] = "Rewire network.";
 char randomSeedDevfunc_docs[] = "Rewire network.";
 
@@ -12,7 +14,19 @@ PyMethodDef helios_funcs[] = {
 		"layout",
 		(PyCFunction)PyCXNetworkLayout,
 		METH_VARARGS,
-		rewirefunc_docs
+		layoutfunc_docs
+	},
+	{
+		"startAsyncLayout",
+		(PyCFunction)PyCXNetworkLayoutStart,
+		METH_VARARGS,
+		asyncLayoutStart
+	},
+	{
+		"stopAsyncLayout",
+		(PyCFunction)PyCXNetworkLayoutStop,
+		METH_VARARGS,
+		asyncLayoutStop
 	},
 	{
 		"setRandomSeed",
