@@ -13,7 +13,7 @@ Requires python headers and a C11 compatible compiler, such as gcc or clang.
 To install it, simply run:
 
 ```bash
-pip install helios-python
+pip install helios
 ```
 
 or clone this repository and install it from master by running:
