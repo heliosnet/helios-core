@@ -14,3 +14,6 @@ speeds = np.ascontiguousarray(speeds,dtype=np.float32);
 for i in range(100):
   helios.layout(edges,positions,speeds);
   print(positions);
+
+a = helios.layoutStart(edges,positions,speeds);
+

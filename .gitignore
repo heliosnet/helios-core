@@ -209,9 +209,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
-
-# Data and Figures
-Data/
-Figures/
-Build_*/
+#VSCode
+.vscode

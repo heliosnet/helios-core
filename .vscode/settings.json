@@ -1,9 +1,0 @@
-{
-  "files.associations": {
-    "arrayobject.h": "c",
-    "__locale": "c",
-    "bitset": "c",
-    "locale": "c"
-  },
-  "python.pythonPath": "/Users/filipi/opt/miniconda3/envs/vtktest/bin/python"
-}

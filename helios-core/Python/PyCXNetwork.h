@@ -9,4 +9,8 @@ PyObject *PyCXRandomSeed(PyObject*, PyObject*);
 
 PyObject * PyCXNetworkLayout(PyObject*,PyObject*);
 
+PyObject * PyCXNetworkLayoutStart(PyObject*,PyObject*);
+
+PyObject * PyCXNetworkLayoutStop(PyObject*,PyObject*);
+
 #endif

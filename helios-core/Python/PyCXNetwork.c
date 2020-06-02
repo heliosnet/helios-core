@@ -5,6 +5,7 @@
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
 #include <numpy/arrayobject.h>
+#include <pthread.h>
 
 #if CV_USE_OPENMP
 #include <omp.h>
@@ -217,16 +218,25 @@ typedef struct PyCXNetwork{
 	CVSize edgesCount;
 	CVSize verticesCount;
 	CVSize iterations;
+	CVSize internalIterations;
 	CVFloat attractiveConstant;
 	CVFloat repulsiveConstant;
 	CVFloat viscosityConstant;
+	CVSize threadIterations;
+	pthread_t thread;
+	CVBool shallStop;
 } iterateParameters;
 
 void _iterate(iterateParameters* par){
-	CVNetworkIteratePositions(par->edges, par->R, par->dR,
-	par->edgesCount, par->verticesCount, par->iterations,
-	par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant);
-	// thrd_exit(0);
+	for(CVIndex iteration=0; iteration<par->iterations; iteration++){
+		CVNetworkIteratePositions(par->edges, par->R, par->dR,
+		par->edgesCount, par->verticesCount, par->internalIterations,
+		par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant);
+		if(par->shallStop){
+			break;
+		}
+	}
+	pthread_exit(0);
 }
 
 
@@ -308,6 +318,11 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	// 	repulsiveConstant,
 	// 	viscosityConstant);
 	
+	// thrd_t thread;
+	// int result;
+
+	// thrd_create(&thread, run, NULL);
+
 	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
 	edgesCount, vertexCount, 2,
 	attractiveConstant,repulsiveConstant,viscosityConstant);
@@ -320,5 +335,121 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	// thrd_create(&tid, _iterate, par);
 	return Py_BuildValue("i", 1);
 }
+
+
+
+
+PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
+	PyArrayObject *positions;
+	PyArrayObject *speeds;
+	PyArrayObject *edges; 
+	float *positionsArray;
+	float *speedsArray;
+	CVIndex *edgesArray;
+	float attractiveConstant = -1;
+	float repulsiveConstant = -1;
+	float viscosityConstant = -1;
+	CVIndex i,j,n;
+	
+	/* Parse tuples separately since args will differ between C fcns */
+	if (!PyArg_ParseTuple(args, "O!O!O!|fff",
+			&PyArray_Type, &edges,
+			&PyArray_Type, &positions,
+			&PyArray_Type, &speeds,
+			&attractiveConstant,
+			&repulsiveConstant,
+			&viscosityConstant
+		)){
+			return NULL;
+		}
+	if (edges == NULL){
+		return NULL;
+	}
+	if (positions == NULL){
+		return NULL;
+	}
+	if (speeds == NULL){
+		return NULL;
+	}
+	
+	/* Check that objects are 'double' type and vectors
+	     Not needed if python wrapper function checks before call to this routine */
+
+	if (not_intvector(edges)){
+		return NULL;
+	}
+	if (not_floatvector(positions)){
+		return NULL;
+	}
+	if (not_floatvector(speeds)){
+		return NULL;
+	}
+	
+	/* Change contiguous arrays into C * arrays   */
+	edgesArray=pyvector_to_Carrayptrs(edges);
+	positionsArray=pyvector_to_Carrayptrs(positions);
+	speedsArray=pyvector_to_Carrayptrs(speeds);
+	
+	/* Get vector dimension. */
+	CVSize vertexCount=positions->dimensions[0];
+	CVSize edgesCount=edges->dimensions[0];
+	//Check dimensions here
+
+	/* Operate on the vectors  */
+	// for ( i=0; i<n; i++)  {
+	// 	positionsArray[i]=10*positionsArray[i];
+	// }
+	iterateParameters* par = calloc(1,sizeof(iterateParameters));
+
+	par->edges = edgesArray;
+	par->R = positionsArray;
+	par->dR = speedsArray;
+	par->edgesCount = edgesCount;
+	par->verticesCount = vertexCount;
+	par->internalIterations = 1;
+	par->iterations = 20000;
+	par->attractiveConstant = attractiveConstant;
+	par->repulsiveConstant = repulsiveConstant;
+	par->viscosityConstant = viscosityConstant;
+	
+	// void CVNetworkIteratePositions(edgesArray,positionsArray,
+	// 	speedsArray, edgesCount, vertexCount, 2,
+	// 	attractiveConstant,
+	// 	repulsiveConstant,
+	// 	viscosityConstant);
+	
+
+	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
+	edgesCount, vertexCount, 2,
+	attractiveConstant,repulsiveConstant,viscosityConstant);
+	
+	// #if CV_USE_OPENMP
+	//   omp_set_num_threads(8);
+	// #endif //_OPENMP
+
+	pthread_create(par->thread, NULL,_iterate, par);
+	return Py_BuildValue("L", (long long)par);
+}
+
+
+PyObject* PyCXNetworkLayoutStop(PyObject *self, PyObject *args){
+	long long parPointerID = 0;
+	/* Parse tuples separately since args will differ between C fcns */
+	if (!PyArg_ParseTuple(args, "L",&parPointerID)){
+			return NULL;
+	}
+
+	if (parPointerID == 0){
+		return NULL;
+	}
+
+	iterateParameters* par = (void *)parPointerID;
+	par->shallStop=CVTrue;
+	pthread_join(par->thread, NULL);
+	free(par);
+	return Py_BuildValue("L", 1);
+}
+
+
 
 
