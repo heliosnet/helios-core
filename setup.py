@@ -34,7 +34,7 @@ with open("README.md", "r") as fh:
 
 setup(
 	name="helios",
-	version="0.1.5",
+	version="0.1.6",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	description="Experimental library to visualize complex networks",
@@ -52,16 +52,17 @@ setup(
 		Extension(
 			"helios",
 			sources=[
-				os.path.join("Source", "CVSimpleQueue.c"),
-				os.path.join("Source", "CVSet.c"),
-				os.path.join("Source", "CVNetwork.c"),
-				os.path.join("Source", "CVDictionary.c"),
-				os.path.join("Source", "CVNetworkLayout.c"),
-				"PyCXNetwork.c",
-				"PyCXBind.c",
+				os.path.join("helios-core","Source", "CVSimpleQueue.c"),
+				os.path.join("helios-core","Source", "CVSet.c"),
+				os.path.join("helios-core","Source", "CVNetwork.c"),
+				os.path.join("helios-core","Source", "CVDictionary.c"),
+				os.path.join("helios-core","Source", "CVNetworkLayout.c"),
+				os.path.join("helios-core","Python", "PyCXNetwork.c"),
+				os.path.join("helios-core","Python", "PyCXBind.c"),
 			],
 			include_dirs=[
-				"Source",
+				os.path.join("helios-core","Source"),
+				os.path.join("helios-core","Python"),
 				np.get_include()
 			],
 			extra_compile_args=[
