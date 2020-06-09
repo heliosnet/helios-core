@@ -4,8 +4,8 @@
 #include <numpy/arrayobject.h>
 
 char layoutfunc_docs[] = "Layout network.";
-char asyncLayoutStart[] = "Async Layout network start.";
-char asyncLayoutStop[] = "Async Layout network stop.";
+char asyncLayoutStart_docs[] = "Async Layout network start.";
+char asyncLayoutStop_docs[] = "Async Layout network stop.";
 char randomSeedfunc_docs[] = "Rewire network.";
 char randomSeedDevfunc_docs[] = "Rewire network.";
 
@@ -20,13 +20,13 @@ PyMethodDef helios_funcs[] = {
 		"startAsyncLayout",
 		(PyCFunction)PyCXNetworkLayoutStart,
 		METH_VARARGS,
-		asyncLayoutStart
+		asyncLayoutStart_docs
 	},
 	{
 		"stopAsyncLayout",
 		(PyCFunction)PyCXNetworkLayoutStop,
 		METH_VARARGS,
-		asyncLayoutStop
+		asyncLayoutStop_docs
 	},
 	{
 		"setRandomSeed",

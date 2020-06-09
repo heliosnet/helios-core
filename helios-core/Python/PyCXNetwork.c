@@ -228,7 +228,7 @@ typedef struct PyCXNetwork{
 } iterateParameters;
 
 void _iterate(iterateParameters* par){
-	for(CVIndex iteration=0; iteration<par->iterations; iteration++){
+	while(1){
 		CVNetworkIteratePositions(par->edges, par->R, par->dR,
 		par->edgesCount, par->verticesCount, par->internalIterations,
 		par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant);
@@ -350,7 +350,7 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 	float repulsiveConstant = -1;
 	float viscosityConstant = -1;
 	CVIndex i,j,n;
-	
+
 	/* Parse tuples separately since args will differ between C fcns */
 	if (!PyArg_ParseTuple(args, "O!O!O!|fff",
 			&PyArray_Type, &edges,
@@ -372,6 +372,7 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 		return NULL;
 	}
 	
+
 	/* Check that objects are 'double' type and vectors
 	     Not needed if python wrapper function checks before call to this routine */
 
@@ -390,6 +391,7 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 	positionsArray=pyvector_to_Carrayptrs(positions);
 	speedsArray=pyvector_to_Carrayptrs(speeds);
 	
+
 	/* Get vector dimension. */
 	CVSize vertexCount=positions->dimensions[0];
 	CVSize edgesCount=edges->dimensions[0];
@@ -418,16 +420,18 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 	// 	repulsiveConstant,
 	// 	viscosityConstant);
 	
-
-	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
-	edgesCount, vertexCount, 2,
-	attractiveConstant,repulsiveConstant,viscosityConstant);
+	// CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
+	// edgesCount, vertexCount, 2,
+	// attractiveConstant,repulsiveConstant,viscosityConstant);
 	
-	// #if CV_USE_OPENMP
-	//   omp_set_num_threads(8);
-	// #endif //_OPENMP
+	// // #if CV_USE_OPENMP
+	// //   omp_set_num_threads(8);
+	// // #endif //_OPENMP
+	
+	pthread_create(&(par->thread), NULL,_iterate, par);
 
-	pthread_create(par->thread, NULL,_iterate, par);
+	// return Py_BuildValue("i", 1);
+
 	return Py_BuildValue("L", (long long)par);
 }
 
@@ -440,14 +444,14 @@ PyObject* PyCXNetworkLayoutStop(PyObject *self, PyObject *args){
 	}
 
 	if (parPointerID == 0){
-		return NULL;
+		Py_RETURN_NONE;
 	}
 
 	iterateParameters* par = (void *)parPointerID;
 	par->shallStop=CVTrue;
-	pthread_join(par->thread, NULL);
+	pthread_join(&(par->thread), NULL);
 	free(par);
-	return Py_BuildValue("L", 1);
+	Py_RETURN_NONE;
 }
 
 
