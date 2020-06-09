@@ -1,7 +1,6 @@
 import numpy as np
 import time
 import helios
-import igraph as ig
 
 networkSize = 100;
 positions = np.random.random((networkSize, 3))
