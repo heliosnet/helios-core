@@ -32,11 +32,14 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+building_on_windows = platform.system() == "Windows"
+
 setup(
 	name="helios",
-	version="0.1.7",
+	version="0.1.8",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
+	compiler = "mingw32" if building_on_windows else None,
 	description="Experimental library to visualize complex networks",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
@@ -45,7 +48,13 @@ setup(
 	classifiers=[
 			"Programming Language :: Python :: 3",
 			"License :: OSI Approved :: MIT License",
-			"Operating System :: OS Independent",
+			"Operating System :: MacOS :: MacOS X",
+			"Operating System :: Microsoft :: Windows",
+			"Operating System :: POSIX :: Linux",
+			"Development Status :: 3 - Alpha",
+			"Programming Language :: C",
+			"Topic :: Scientific/Engineering :: Visualization",
+			"Intended Audience :: Science/Research"
 	],
 	python_requires='>=3.0',
 	ext_modules = [
