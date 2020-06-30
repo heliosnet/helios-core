@@ -23,7 +23,7 @@
 #include <strings.h>
 
 
-#if __LP64__ || (TARGET_OS_EMBEDDED && !TARGET_OS_IPHONE) || NS_BUILD_32_LIKE_64
+#if __LP64__ || _WIN64 || NS_BUILD_32_LIKE_64
 #define CV_BUILD_64BITS 1
 #endif
 
