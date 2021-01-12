@@ -36,7 +36,7 @@ building_on_windows = platform.system() == "Windows"
 
 setup(
 	name="helios",
-	version="0.1.8",
+	version="0.2.0",
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	compiler = "mingw32" if building_on_windows else None,
