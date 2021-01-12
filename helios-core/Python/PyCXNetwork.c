@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "PyCXNetwork.h"
-#include <CVNetwork.h>
 #include <CVNetworkLayout.h>
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
@@ -173,6 +172,7 @@ void *pyvector_to_Carrayptrs(PyArrayObject *arrayin)  {
 	n=arrayin->dimensions[0];
 	return arrayin->data;  /* pointer to arrayin data as double */
 }
+
 /* ==== Check that PyArrayObject is a double (Float) type and a vector ==============
     return 1 if an error and raise exception */ 
 int  not_floatvector(PyArrayObject *vec)  {
@@ -197,37 +197,7 @@ int  not_intvector(PyArrayObject *vec)  {
 
 
 
-PyObject *PyCXRandomSeed(PyObject* self, PyObject* args){
-	unsigned int randomSeed;
-	if (!PyArg_ParseTuple(args, "I", &randomSeed)){
-		PyErr_SetString(PyExc_AttributeError, "one integer parameter need to be provided");
-	}
-	CVRandomSeed(randomSeed);
-	Py_RETURN_NONE;
-}
-
-PyObject *PyCXRandomSeedDev(PyObject* self, PyObject* args){
-	CVRandomSeedDev();
-	Py_RETURN_NONE;
-}
-
-typedef struct PyCXNetwork{
-	CVIndex* edges;
-	float* R;
-	float* dR;
-	CVSize edgesCount;
-	CVSize verticesCount;
-	CVSize iterations;
-	CVSize internalIterations;
-	CVFloat attractiveConstant;
-	CVFloat repulsiveConstant;
-	CVFloat viscosityConstant;
-	CVSize threadIterations;
-	pthread_t thread;
-	CVBool shallStop;
-} iterateParameters;
-
-void _iterate(iterateParameters* par){
+void _iterate(PyCXLayoutParameters* par){
 	while(1){
 		CVNetworkIteratePositions(par->edges, par->R, par->dR,
 		par->edgesCount, par->verticesCount, par->internalIterations,
@@ -300,7 +270,7 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	// for ( i=0; i<n; i++)  {
 	// 	positionsArray[i]=10*positionsArray[i];
 	// }
-	iterateParameters par;
+	PyCXLayoutParameters par;
 
 	par.edges = edgesArray;
 	par.R = positionsArray;
@@ -401,7 +371,7 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 	// for ( i=0; i<n; i++)  {
 	// 	positionsArray[i]=10*positionsArray[i];
 	// }
-	iterateParameters* par = calloc(1,sizeof(iterateParameters));
+	PyCXLayoutParameters* par = calloc(1,sizeof(PyCXLayoutParameters));
 
 	par->edges = edgesArray;
 	par->R = positionsArray;
@@ -428,7 +398,7 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 	// //   omp_set_num_threads(8);
 	// // #endif //_OPENMP
 	
-	pthread_create(&(par->thread), NULL,_iterate, par);
+	pthread_create(&(par->thread), NULL,(void *)_iterate, par);
 
 	// return Py_BuildValue("i", 1);
 
@@ -447,9 +417,9 @@ PyObject* PyCXNetworkLayoutStop(PyObject *self, PyObject *args){
 		Py_RETURN_NONE;
 	}
 
-	iterateParameters* par = (void *)parPointerID;
+	PyCXLayoutParameters* par = (void *)parPointerID;
 	par->shallStop=CVTrue;
-	pthread_join(&(par->thread), NULL);
+	pthread_join(par->thread, NULL);
 	free(par);
 	Py_RETURN_NONE;
 }

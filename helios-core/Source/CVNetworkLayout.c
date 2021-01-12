@@ -246,6 +246,9 @@ void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR,
 		CVNetworkIteratePositions_implementation(attractiveConstant, repulsiveConstant, viscosityConstant, softeningConstant,
 												 R, dR,
 												 edges, verticesCount, edgesCount);
+		for(CVIndex j=0;j<verticesCount;j++){
+			R[j] = CVRandomFloat();
+		}
 		CVNetworkRadiusRecenter(R,verticesCount);
 	}
 }
