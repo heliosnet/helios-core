@@ -97,7 +97,13 @@ conda install -c anaconda libpython
 conda install -c msys2 m2w64-toolchain
 ```
 
-You can now use `pip install ./` or compile distribs: 
+You can now use pip install:
+
+```bash
+pip install ./
+```
+or compile distribs: 
+
 ```bash
 python setup.py sdist bdist_wheel
 ```
