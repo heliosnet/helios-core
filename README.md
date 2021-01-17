@@ -88,6 +88,29 @@ print(layout.positions)
 ```
 You can restart the layout once it stopped. Subsequent calls to the `start` method have no effect if the layout is running.
 
+
+## Compiling on windows:
+
+You need m2w64 and libpython to compile it.
+```bash
+conda install -c anaconda libpython
+conda install -c msys2 m2w64-toolchain
+```
+
+You can now use `pip install ./` or compile distribs: 
+```bash
+python setup.py sdist bdist_wheel
+```
+
+Creating a build environment using:
+```
+conda create -n buildpy36 -c default -c anaconda -c msys2 python=3.6 numpy libpython m2w64-toolchain 
+```
+
+change `python=3.6` and `buildpy36` to the version of python you would like to use.
+
+
+
 ## References
 
 [1] Fruchterman, T. M. J., & Reingold, E. M. (1991). Graph Drawing by Force-Directed Placement. Software: Practice and Experience, 21(11).
