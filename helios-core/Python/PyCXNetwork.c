@@ -5,6 +5,7 @@
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
 #include <numpy/arrayobject.h>
 #include <pthread.h>
+#include <sys/types.h>
 
 #if CV_USE_OPENMP
 #include <omp.h>
