@@ -1,6 +1,7 @@
 # .github/workflows/my-build.yml
 name: Debugging with SSH
-on: push
+on:
+  workflow_dispatch:
 jobs:
   build:
     runs-on: windows-latest
