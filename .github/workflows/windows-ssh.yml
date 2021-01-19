@@ -1,0 +1,15 @@
+# .github/workflows/my-build.yml
+name: Debugging with SSH
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+     - uses: actions/checkout@v1
+
+     - name: Start SSH session
+       uses: luchihoratiu/debug-via-ssh@main
+       with:
+         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+         SSH_PASS: ${{ secrets.SSH_PASS }} 
