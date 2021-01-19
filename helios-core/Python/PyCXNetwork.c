@@ -7,6 +7,23 @@
 #include <pthread.h>
 #include <sys/types.h>
 
+typedef struct PyCXNetwork{
+	CVIndex* edges;
+	float* R;
+	float* dR;
+	CVSize edgesCount;
+	CVSize verticesCount;
+	CVSize iterations;
+	CVSize internalIterations;
+	CVFloat attractiveConstant;
+	CVFloat repulsiveConstant;
+	CVFloat viscosityConstant;
+	CVSize threadIterations;
+	pthread_t thread;
+	CVBool shallStop;
+} PyCXLayoutParameters;
+
+
 #if CV_USE_OPENMP
 #include <omp.h>
 #endif //_OPENMP
