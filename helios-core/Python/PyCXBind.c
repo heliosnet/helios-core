@@ -3,6 +3,7 @@
 #include <Python.h>
 #include "structmember.h"
 #include <pthread.h>
+#include <sys/types.h>
 #include "PyCXNetwork.h"
 #include <CVNetwork.h>
 

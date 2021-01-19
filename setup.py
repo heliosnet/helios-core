@@ -13,7 +13,7 @@ if(platform.system()=="Darwin"):
 	if(enableParallelism):
 		extraOptions += ["-DCV_USE_LIBDISPATCH=1"];
 elif(platform.system()=="Windows"):
-	extraOptions = ["-D WIN32"];
+	extraOptions = ["-D WIN32 -lpthread"];
 	if(enableParallelism):
 		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
 		extraLinkOptions+=["-lgomp"];
