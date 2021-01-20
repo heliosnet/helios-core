@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python package
+name: Build Test and Publish
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip wheel build numpy
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Building for test
       run: |
@@ -109,7 +109,7 @@ jobs:
   upload_all:
     needs: [build-macos, build-linux, build-windows]
     runs-on: ubuntu-latest
-    # if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
      - uses: actions/download-artifact@v2
        with:
@@ -118,7 +118,7 @@ jobs:
      - name: List directory contents
        run: |
          ls -l ./dist
-    #  - uses: pypa/gh-action-pypi-publish@v1.4.1
-    #    with:
-    #      user: __token__
-    #      password: ${{ secrets.pypi_password }}
+     - uses: pypa/gh-action-pypi-publish@v1.4.1
+       with:
+         user: __token__
+         password: ${{ secrets.PIPYTOKEN }}
