@@ -1,4 +1,5 @@
 # Helios
+![Build Test and Publish](https://github.com/heliosnet/helios-core/workflows/Build%20Test%20and%20Publish/badge.svg?event=push)
 
 Helios is a python library implemented in C for layouting and visualizing complex networks.
 
