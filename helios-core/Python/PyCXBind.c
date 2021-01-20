@@ -1,12 +1,12 @@
 
 #define PY_SSIZE_T_CLEAN
+#include "PyCXVersion.h"
 #include <Python.h>
 #include "structmember.h"
 #include <pthread.h>
 #include <sys/types.h>
 #include "PyCXNetwork.h"
 #include <CVNetwork.h>
-
 #include <CVNetworkLayout.h>
 // #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
@@ -378,6 +378,11 @@ PyMODINIT_FUNC PyInit_helios(void){
 			Py_DECREF(m);
 			return NULL;
 	}
+	if (PyModule_AddStringConstant(m,"__version__",CVTOKENTOSTRING(k_PYCXVersion))) {
+			Py_DECREF(m);
+			return NULL;
+	}
+	
 
 	return m;
 }

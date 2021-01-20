@@ -34,9 +34,13 @@ with open("README.md", "r") as fh:
 
 building_on_windows = platform.system() == "Windows"
 
+with open(os.path.join("helios-core","Python", "PyCXVersion.h"),"rt") as fd:
+	version = fd.readline().strip().split(" ")[-1]
+
+print("Compiling version %s"%version);
 setup(
 	name="helios",
-	version="0.2.0",
+	version=version,
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	compiler = "mingw32" if building_on_windows else None,
@@ -56,7 +60,7 @@ setup(
 			"Topic :: Scientific/Engineering :: Visualization",
 			"Intended Audience :: Science/Research"
 	],
-	python_requires='>=3.0',
+	python_requires='>=3.4',
 	ext_modules = [
 		Extension(
 			"helios",
