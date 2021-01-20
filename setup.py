@@ -3,7 +3,6 @@
 from setuptools import setup, Extension, Command
 import os.path;
 import platform;
-import numpy as np;
 enableParallelism = True;
 
 extraOptions = []
@@ -26,6 +25,12 @@ else:
 	if(enableParallelism):
 		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
 		extraLinkOptions+=["-lgomp"];
+
+# WORKAROUND: https://stackoverflow.com/questions/54117786/add-numpy-get-include-argument-to-setuptools-without-preinstalled-numpy
+class get_numpy_include(object):
+	def __str__(self):
+			import numpy
+			return numpy.get_include()
 
 import setuptools
 
@@ -77,7 +82,7 @@ setup(
 			include_dirs=[
 				os.path.join("helios-core","Source"),
 				os.path.join("helios-core","Python"),
-				np.get_include()
+				get_numpy_include()
 			],
 			extra_compile_args=[
 				# "-g",
