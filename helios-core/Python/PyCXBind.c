@@ -378,6 +378,7 @@ PyMODINIT_FUNC PyInit_helios(void){
 			Py_DECREF(m);
 			return NULL;
 	}
+	
 	if (PyModule_AddStringConstant(m,"__version__",CVTOKENTOSTRING(k_PYCXVersion))) {
 			Py_DECREF(m);
 			return NULL;

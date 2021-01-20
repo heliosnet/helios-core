@@ -44,6 +44,7 @@ setup(
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	compiler = "mingw32" if building_on_windows else None,
+  setup_requires=['wheel',"numpy"],
 	description="Experimental library to visualize complex networks",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
