@@ -66,7 +66,7 @@ setup(
 			"Topic :: Scientific/Engineering :: Visualization",
 			"Intended Audience :: Science/Research"
 	],
-	python_requires='>=3.5',
+	python_requires='>=3.6',
 	ext_modules = [
 		Extension(
 			"helios",
