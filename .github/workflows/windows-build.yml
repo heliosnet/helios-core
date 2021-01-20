@@ -25,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip wheels build numpy
+        python -m pip install --upgrade pip wheel build numpy
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Building for test
       run: |
