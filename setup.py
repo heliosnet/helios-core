@@ -3,7 +3,6 @@
 from setuptools import setup, Extension, Command
 import os.path;
 import platform;
-import numpy as np;
 enableParallelism = True;
 
 extraOptions = []
@@ -27,6 +26,12 @@ else:
 		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
 		extraLinkOptions+=["-lgomp"];
 
+# WORKAROUND: https://stackoverflow.com/questions/54117786/add-numpy-get-include-argument-to-setuptools-without-preinstalled-numpy
+class get_numpy_include(object):
+	def __str__(self):
+			import numpy
+			return numpy.get_include()
+
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -34,12 +39,17 @@ with open("README.md", "r") as fh:
 
 building_on_windows = platform.system() == "Windows"
 
+with open(os.path.join("helios-core","Python", "PyCXVersion.h"),"rt") as fd:
+	version = fd.readline().strip().split(" ")[-1]
+
+print("Compiling version %s"%version);
 setup(
 	name="helios",
-	version="0.2.0",
+	version=version,
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	compiler = "mingw32" if building_on_windows else None,
+  setup_requires=['wheel',"numpy"],
 	description="Experimental library to visualize complex networks",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
@@ -56,7 +66,7 @@ setup(
 			"Topic :: Scientific/Engineering :: Visualization",
 			"Intended Audience :: Science/Research"
 	],
-	python_requires='>=3.0',
+	python_requires='>=3.5',
 	ext_modules = [
 		Extension(
 			"helios",
@@ -72,7 +82,7 @@ setup(
 			include_dirs=[
 				os.path.join("helios-core","Source"),
 				os.path.join("helios-core","Python"),
-				np.get_include()
+				get_numpy_include()
 			],
 			extra_compile_args=[
 				# "-g",
