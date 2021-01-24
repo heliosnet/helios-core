@@ -1,5 +1,5 @@
 
-#include <CVNetwork.h>
+#include "CVNetwork.h"
 
 // static inline void __recenterNetworkPositions(float* Rx,float* Ry,float* Rz,CVSize count){
 // 	double aRMx=0;
@@ -246,9 +246,7 @@ void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR,
 		CVNetworkIteratePositions_implementation(attractiveConstant, repulsiveConstant, viscosityConstant, softeningConstant,
 												 R, dR,
 												 edges, verticesCount, edgesCount);
-		for(CVIndex j=0;j<verticesCount;j++){
-			R[j] = CVRandomFloat();
-		}
+		
 		CVNetworkRadiusRecenter(R,verticesCount);
 	}
 }
