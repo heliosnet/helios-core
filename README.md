@@ -1,8 +1,8 @@
+# Helios FR
 ![Build Test and Publish](https://github.com/heliosnet/helios-core/workflows/Build%20Test%20and%20Publish/badge.svg?event=push)
 
-# Helios
 
-Helios is a python library implemented in C for layouting and visualizing complex networks.
+Helios FR is a python library implemented in C for layouting and visualizing complex networks. It implements the Fruchterman-Reingold (FR) algorithm.
 
 ## Layout
 
@@ -15,7 +15,7 @@ Requires python headers and a C11 compatible compiler, such as gcc or clang.
 To install it, simply run:
 
 ```bash
-pip install helios
+pip install heliosFR
 ```
 
 or clone this repository and install it from master by running:
@@ -31,7 +31,7 @@ Example initialization with a small network.
 
 ```python
 import numpy as np
-import helios
+import heliosFR
 
 positions = np.random.random((4, 3))
 
@@ -49,7 +49,7 @@ edges = np.ascontiguousarray(edges,dtype=np.uint64)
 # speeds is required to be an contiguous uint64 numpy array
 speeds = np.zeros(positions.shape,dtype=np.float32)
 
-layout = helios.FRLayout(edges,positions,speeds)
+layout = heliosFR.FRLayout(edges, positions, speeds, maxWorkers=8,updateInterval=10)
 ```
 
 Two APIS are available to iterate the layouts, synchronized and aynchronous.

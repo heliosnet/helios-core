@@ -4,6 +4,7 @@
 #include "CVCommons.h"
 void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR,
 	CVSize edgesCount, CVSize verticesCount, CVSize iterations,
-	CVFloat attractiveConstant,CVFloat repulsiveConstant,CVFloat viscosityConstant);
+	CVFloat attractiveConstant,CVFloat repulsiveConstant,CVFloat viscosityConstant,
+	CVInteger maxWorkers, CVInteger updateInterval);
   
 #endif

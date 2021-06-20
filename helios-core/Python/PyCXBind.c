@@ -9,7 +9,7 @@
 #include <CVNetwork.h>
 #include <CVNetworkLayout.h>
 // #define NO_IMPORT_ARRAY
-#define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
+#define PY_ARRAY_UNIQUE_SYMBOL heliosFR_ARRAY_API
 #include <numpy/arrayobject.h>
 
 #if CV_USE_OPENMP
@@ -61,13 +61,13 @@ static PyMethodDef helios_funcs[] = {
 	{
 		"layout",
 		(PyCFunction)PyCXNetworkLayout,
-		METH_VARARGS,
+		METH_VARARGS | METH_KEYWORDS,
 		layoutfunc_docs
 	},
 	{
 		"startAsyncLayout",
 		(PyCFunction)PyCXNetworkLayoutStart,
-		METH_VARARGS,
+		METH_VARARGS | METH_KEYWORDS,
 		asyncLayoutStart_docs
 	},
 	{
@@ -96,6 +96,9 @@ typedef struct {
 		CVFloat repulsiveConstant;
 		CVFloat viscosityConstant;
 		CVSize _threadIterations;
+		CVInteger maxWorkers;
+		CVInteger updateInterval;
+		CVInteger currentIterations;
 		CVBool _shallStop;
 		CVBool _isRunning;
 		pthread_t _thread;
@@ -138,6 +141,9 @@ PyObject * PyFRLayout_new(PyTypeObject *type, PyObject *args, PyObject *kwds){
 		self->repulsiveConstant = -1;
 		self->viscosityConstant = -1;
 		self->_threadIterations = 1;
+		self->maxWorkers = -1;
+		self->updateInterval = 10;
+		self->currentIterations = 0;
 		self->_shallStop = CVFalse;
 		self->_isRunning = CVFalse;
 		return (PyObject *) self;
@@ -151,6 +157,8 @@ int PyFRLayout_init(PyFRLayout *self, PyObject *args, PyObject *kwds){
 			"attractiveConstant",
 			"repulsiveConstant",
 			"viscosityConstant",
+			"maxWorkers",
+			"updateInterval",
 			NULL
 		};
 		PyArrayObject *edgesArray = NULL;
@@ -158,13 +166,15 @@ int PyFRLayout_init(PyFRLayout *self, PyObject *args, PyObject *kwds){
 		PyArrayObject *velocitiesArray = NULL; 
 		PyArrayObject *tmp = NULL; 
 
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!|fff", kwlist,
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!O!O!|fffll", kwlist,
 														&PyArray_Type, &edgesArray,
 														&PyArray_Type, &positionsArray,
 														&PyArray_Type, &velocitiesArray,
 														&self->attractiveConstant,
 														&self->repulsiveConstant,
-														&self->viscosityConstant)){
+														&self->viscosityConstant,
+														&self->maxWorkers,
+														&self->updateInterval)){
 				return -1;
 		}
 
@@ -236,6 +246,9 @@ PyObject * PyFRLayout_getPositions(PyFRLayout *self, void *closure){
 	Py_INCREF(self->positionsArray);
 	return (PyObject*)self->positionsArray;
 }
+PyObject * PyFRLayout_getCurrentIterations(PyFRLayout *self, void *closure){
+	return Py_BuildValue("l", self->currentIterations);
+}
 PyObject * PyFRLayout_getVelocities(PyFRLayout *self, void *closure){
 	Py_INCREF(self->velocitiesArray);
 	return (PyObject*)self->velocitiesArray;
@@ -245,18 +258,22 @@ static PyGetSetDef PyFRLayout_getsetters[] = {
 		{"edges", (getter) PyFRLayout_getEdges,  NULL,"Edges array", NULL},
 		{"positions", (getter) PyFRLayout_getPositions,  NULL,"Positions array", NULL},
 		{"velocities", (getter) PyFRLayout_getVelocities,  NULL,"Velocities array", NULL},
+		{"iterations", (getter) PyFRLayout_getCurrentIterations,  NULL,"Current Iterations count", NULL},
 		{NULL}  /* Sentinel */
 };
 
 static void _iterate(PyFRLayout* layout){
 	CVNetworkIteratePositions(layout->edges, layout->R, layout->dR,
 		layout->edgesCount, layout->verticesCount, layout->internalIterations,
-		layout->attractiveConstant,layout->repulsiveConstant,layout->viscosityConstant);
+		layout->attractiveConstant,layout->repulsiveConstant,layout->viscosityConstant,
+		layout->maxWorkers,layout->updateInterval);
+		
 		
 }
 
 static void _threadIterate(PyFRLayout* layout){
 	while(1){
+		CVAtomicIncrementInteger(&layout->currentIterations);
 		_iterate(layout);
 		if(layout->_shallStop){
 			break;
@@ -303,7 +320,7 @@ PyObject* PyFRLayout_startLayout(PyFRLayout *self, PyObject *Py_UNUSED(ignored))
 }
 
 PyObject* PyFRLayout_stopLayout(PyFRLayout *self, PyObject *Py_UNUSED(ignored)){
-
+	self->currentIterations = 0;
 	if(self->_isRunning){
 		self->_shallStop=CVTrue;
 		pthread_join(self->_thread, NULL);
@@ -331,7 +348,7 @@ static PyMethodDef PyFRLayout_methods[] = {
 
 static PyTypeObject PyFRLayoutType = {
 		PyVarObject_HEAD_INIT(NULL, 0)
-		.tp_name = "helios.FRLayout",
+		.tp_name = "heliosFR.FRLayout",
 		.tp_doc = "PyFRLayout objects",
 		.tp_basicsize = sizeof(PyFRLayout),
 		.tp_itemsize = 0,
@@ -351,7 +368,7 @@ char heliosmod_docs[] = "This is CXNetwork module.";
 
 static PyModuleDef helios_mod = {
 	PyModuleDef_HEAD_INIT,
-	.m_name = "helios",
+	.m_name = "heliosFR",
 	.m_doc = heliosmod_docs,
 	.m_size = -1,
 	.m_methods = helios_funcs,
@@ -361,7 +378,7 @@ static PyModuleDef helios_mod = {
 	.m_free = NULL
 };
 
-PyMODINIT_FUNC PyInit_helios(void){
+PyMODINIT_FUNC PyInit_heliosFR(void){
 	import_array();
 
 	PyObject *m;
@@ -379,7 +396,7 @@ PyMODINIT_FUNC PyInit_helios(void){
 			return NULL;
 	}
 	
-	if (PyModule_AddStringConstant(m,"__version__",CVTOKENTOSTRING(k_PYCXVersion))) {
+	if (PyModule_AddStringConstant(m,"__version__",CVTOKENTOSTRING(k_PYCXVersion))<0) {
 			Py_DECREF(m);
 			return NULL;
 	}
