@@ -2,7 +2,7 @@
 #include "PyCXNetwork.h"
 #include <CVNetworkLayout.h>
 #define NO_IMPORT_ARRAY
-#define PY_ARRAY_UNIQUE_SYMBOL helios_ARRAY_API
+#define PY_ARRAY_UNIQUE_SYMBOL heliosFR_ARRAY_API
 #include <numpy/arrayobject.h>
 #include <pthread.h>
 #include <sys/types.h>
@@ -19,6 +19,8 @@ typedef struct PyCXNetwork{
 	CVFloat repulsiveConstant;
 	CVFloat viscosityConstant;
 	CVSize threadIterations;
+	CVInteger maxWorkers;
+	CVInteger updateInterval;
 	pthread_t thread;
 	CVBool shallStop;
 } PyCXLayoutParameters;
@@ -219,7 +221,7 @@ void _iterate(PyCXLayoutParameters* par){
 	while(1){
 		CVNetworkIteratePositions(par->edges, par->R, par->dR,
 		par->edgesCount, par->verticesCount, par->internalIterations,
-		par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant);
+		par->attractiveConstant,par->repulsiveConstant,par->viscosityConstant,par->maxWorkers,par->updateInterval);
 		if(par->shallStop){
 			break;
 		}
@@ -228,7 +230,18 @@ void _iterate(PyCXLayoutParameters* par){
 }
 
 
-PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
+PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args, PyObject *kwds){
+	static char *kwlist[] = {
+		"edges",
+		"positions",
+		"speeds",
+		"attractiveConstant",
+		"repulsiveConstant",
+		"viscosityConstant",
+		"maxWorkers",
+		"updateInterval",
+		NULL
+	};
 	PyArrayObject *positions;
 	PyArrayObject *speeds;
 	PyArrayObject *edges; 
@@ -238,16 +251,24 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	float attractiveConstant = -1;
 	float repulsiveConstant = -1;
 	float viscosityConstant = -1;
+	long int maxWorkers = -1;
+	long int updateInterval = 10;
+	// ms
 	CVIndex i,j,n;
 	
 	/* Parse tuples separately since args will differ between C fcns */
-	if (!PyArg_ParseTuple(args, "O!O!O!|fff",
+	if (!PyArg_ParseTupleAndKeywords(args,
+			kwds,
+			"O!O!O!|fffll",
+			kwlist,
 			&PyArray_Type, &edges,
 			&PyArray_Type, &positions,
 			&PyArray_Type, &speeds,
 			&attractiveConstant,
 			&repulsiveConstant,
-			&viscosityConstant
+			&viscosityConstant,
+			&maxWorkers,
+			&updateInterval
 		)){
 			return NULL;
 		}
@@ -299,6 +320,8 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 	par.attractiveConstant = attractiveConstant;
 	par.repulsiveConstant = repulsiveConstant;
 	par.viscosityConstant = viscosityConstant;
+	par.maxWorkers = maxWorkers;
+	par.updateInterval = updateInterval;
 	
 	// void CVNetworkIteratePositions(edgesArray,positionsArray,
 	// 	speedsArray, edgesCount, vertexCount, 2,
@@ -313,7 +336,7 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 
 	CVNetworkIteratePositions(edgesArray, positionsArray, speedsArray,
 	edgesCount, vertexCount, 2,
-	attractiveConstant,repulsiveConstant,viscosityConstant);
+	attractiveConstant,repulsiveConstant,viscosityConstant,maxWorkers,updateInterval);
 	
 	// #if CV_USE_OPENMP
 	//   omp_set_num_threads(8);
@@ -327,26 +350,45 @@ PyObject* PyCXNetworkLayout(PyObject *self, PyObject *args){
 
 
 
-PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
-	PyArrayObject *positions;
-	PyArrayObject *speeds;
-	PyArrayObject *edges; 
-	float *positionsArray;
-	float *speedsArray;
-	CVIndex *edgesArray;
+PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args, PyObject *kwds){
+	static char *kwlist[] = {
+		"edges",
+		"positions",
+		"speeds",
+		"attractiveConstant",
+		"repulsiveConstant",
+		"viscosityConstant",
+		"maxWorkers",
+		"interval",
+		NULL
+	};
+
+	PyArrayObject *edges = NULL;
+	CVIndex *edgesArray = NULL;
+	PyArrayObject *positions = NULL;
+	float *positionsArray = NULL;
+	PyArrayObject *speeds = NULL;
+	float *speedsArray = NULL;
 	float attractiveConstant = -1;
 	float repulsiveConstant = -1;
 	float viscosityConstant = -1;
+	long int maxWorkers = -1;
+	long int updateInterval = 10; //ms
 	CVIndex i,j,n;
 
 	/* Parse tuples separately since args will differ between C fcns */
-	if (!PyArg_ParseTuple(args, "O!O!O!|fff",
+	if (!PyArg_ParseTupleAndKeywords(args,
+			kwds,
+			"O!O!O!|fffll",
+			kwlist,
 			&PyArray_Type, &edges,
 			&PyArray_Type, &positions,
 			&PyArray_Type, &speeds,
 			&attractiveConstant,
 			&repulsiveConstant,
-			&viscosityConstant
+			&viscosityConstant,
+			&maxWorkers,
+			&updateInterval
 		)){
 			return NULL;
 		}
@@ -401,6 +443,9 @@ PyObject* PyCXNetworkLayoutStart(PyObject *self, PyObject *args){
 	par->attractiveConstant = attractiveConstant;
 	par->repulsiveConstant = repulsiveConstant;
 	par->viscosityConstant = viscosityConstant;
+	par->maxWorkers = maxWorkers;
+	par->updateInterval = updateInterval;
+
 	
 	// void CVNetworkIteratePositions(edgesArray,positionsArray,
 	// 	speedsArray, edgesCount, vertexCount, 2,

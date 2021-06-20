@@ -44,7 +44,7 @@ with open(os.path.join("helios-core","Python", "PyCXVersion.h"),"rt") as fd:
 
 print("Compiling version %s"%version);
 setup(
-	name="helios",
+	name="heliosFR",
 	version=version,
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
@@ -69,7 +69,7 @@ setup(
 	python_requires='>=3.6',
 	ext_modules = [
 		Extension(
-			"helios",
+			"heliosFR",
 			sources=[
 				os.path.join("helios-core","Source", "CVSimpleQueue.c"),
 				os.path.join("helios-core","Source", "CVSet.c"),

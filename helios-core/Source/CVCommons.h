@@ -1064,6 +1064,13 @@ if((capacity)<(count)+1){\
 (array)[count-1]=(element);\
 } while (0)
 
+//sleep functions
+#if __WIN32__
+#include <windows.h>
+#else
+#include <unistd.h>
+#define CVSleepMillisecond(x) usleep((x)*1000)
+#endif
 
 
 #endif

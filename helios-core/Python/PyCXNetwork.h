@@ -7,8 +7,8 @@
 
 
 
-PyObject * PyCXNetworkLayout(PyObject*,PyObject*);
-PyObject * PyCXNetworkLayoutStart(PyObject*,PyObject*);
+PyObject * PyCXNetworkLayout(PyObject*,PyObject*,PyObject*);
+PyObject * PyCXNetworkLayoutStart(PyObject*,PyObject*,PyObject*);
 PyObject * PyCXNetworkLayoutStop(PyObject*,PyObject*);
 
 #endif

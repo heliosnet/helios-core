@@ -57,7 +57,7 @@ void CVNetworkRadiusRecenter(CVFloat* R, CVSize vcount){
 static void CVNetworkIteratePositions_implementation(CVFloat attractiveForce, CVFloat repulsiveForce,CVFloat viscosityForce, CVFloat softening,
 												CVFloat* R, CVFloat* dR,
 												CVIndex* edges,
-												CVSize vcount, CVSize ecount){
+												CVSize vcount, CVSize ecount, CVInteger maxWorkers){
 	CVFloat dt=1;
 	
 	CVSize ci;
@@ -66,14 +66,17 @@ static void CVNetworkIteratePositions_implementation(CVFloat attractiveForce, CV
 	
 	double* totalF = calloc(verticesCount*dimensions, sizeof(double));
 	CVSize unrolledLoops = kCVDefaultParallelBlocks;
+	if(maxWorkers>=0){
+		unrolledLoops = maxWorkers;
+	}
 	CVSize unrolledSize = 1 + ((verticesCount - 1) / unrolledLoops);
 	
-	CVParallelForStart(repulstiveIteraction, blockIndex, unrolledLoops){
+	CVParallelForStart(repulstiveIteraction, nodeBlockIndex, unrolledLoops){
 		double* localF = calloc(verticesCount*dimensions, sizeof(double));
 		
-		CVSize maxIndex = CVMIN((blockIndex+1)*unrolledSize, verticesCount);
+		CVSize maxIndex = CVMIN((nodeBlockIndex+1)*unrolledSize, verticesCount);
 		CVIndex i;
-		for(i=blockIndex*unrolledSize;i<maxIndex;i++){
+		for(i=nodeBlockIndex*unrolledSize;i<maxIndex;i++){
 			const CVFloat* Ri=R+i*dimensions;
 			CVIndex j;
 			for(j=0;j<i;j++){
@@ -116,14 +119,14 @@ static void CVNetworkIteratePositions_implementation(CVFloat attractiveForce, CV
 	CVParallelForEnd(repulstiveIteraction);
 	
 	
-	unrolledLoops = kCVDefaultParallelBlocks;
+	// unrolledLoops = kCVDefaultParallelBlocks;
 	unrolledSize = 1 + ((ecount - 1) / unrolledLoops);
-	CVParallelForStart(attractiveIteraction, blockIndex, unrolledLoops){
+	CVParallelForStart(attractiveIteraction, edgeBlockIndex, unrolledLoops){
 		double* localF = calloc(verticesCount*3, sizeof(double));
 		
-		size_t maxIndex = CVMIN((blockIndex+1)*unrolledSize, ecount);
+		size_t maxIndex = CVMIN((edgeBlockIndex+1)*unrolledSize, ecount);
 		size_t i;
-		for(i=blockIndex*unrolledSize;i<maxIndex;i++){
+		for(i=edgeBlockIndex*unrolledSize;i<maxIndex;i++){
 			CVIndex fromVertex=edges[i*2+0];
 			CVIndex toVertex=edges[i*2+1];
 			if(fromVertex!=toVertex){
@@ -237,7 +240,8 @@ static void CVNetworkIteratePositions_implementation(CVFloat attractiveForce, CV
 
 void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR,
 	CVSize edgesCount, CVSize verticesCount, CVSize iterations,
-	CVFloat attractiveConstant,CVFloat repulsiveConstant,CVFloat viscosityConstant){
+	CVFloat attractiveConstant,CVFloat repulsiveConstant,CVFloat viscosityConstant,
+	CVInteger maxWorkers, CVInteger updateInterval){
 	if (attractiveConstant < 0.0f) attractiveConstant = k_CVDefaultAttractionConstant;
 	if (repulsiveConstant < 0.0f) repulsiveConstant = k_CVDefaultRepulsiveConstant;
 	if (viscosityConstant < 0.0f) viscosityConstant = k_CVDefaultViscosityConstant;
@@ -245,9 +249,12 @@ void CVNetworkIteratePositions(CVIndex* edges, float* R, float* dR,
 	for(CVIndex i=0;i<iterations;i++){
 		CVNetworkIteratePositions_implementation(attractiveConstant, repulsiveConstant, viscosityConstant, softeningConstant,
 												 R, dR,
-												 edges, verticesCount, edgesCount);
+												 edges, verticesCount, edgesCount,maxWorkers);
 		
 		CVNetworkRadiusRecenter(R,verticesCount);
+		if(updateInterval>=0){
+			CVSleepMillisecond(updateInterval);
+		}
 	}
 }
 
