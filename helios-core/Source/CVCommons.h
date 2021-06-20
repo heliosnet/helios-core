@@ -1067,6 +1067,7 @@ if((capacity)<(count)+1){\
 //sleep functions
 #if __WIN32__
 #include <windows.h>
+#define CVSleepMillisecond(x) Sleep((x))
 #else
 #include <unistd.h>
 #define CVSleepMillisecond(x) usleep((x)*1000)
