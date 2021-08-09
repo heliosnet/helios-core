@@ -27,7 +27,7 @@ jobs:
          python-version: ${{ matrix.python-version }}
      - name: Installing required conda packages
        run: |
-         conda install -c default -c anaconda -c msys2 numpy libpython m2w64-toolchain
+         conda install -c default -c anaconda -c msys2 libpython m2w64-toolchain
      - name: Building for test
        run: |
          pip install -e .
