@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "PyCXNetwork.h"
-#include <CVNetworkLayout.h>
+#include "../Includes/PyCXNetwork.h"
+#include "../Includes/CVNetworkLayoutFR.h"
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL heliosFR_ARRAY_API
 #include <numpy/arrayobject.h>

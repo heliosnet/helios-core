@@ -1,14 +1,16 @@
 
 #define PY_SSIZE_T_CLEAN
-#include "PyCXVersion.h"
-#include <Python.h>
-#include "structmember.h"
+#include "../Includes/PyCXVersion.h"
 #include <pthread.h>
 #include <sys/types.h>
-#include "PyCXNetwork.h"
-#include <CVNetwork.h>
-#include <CVNetworkLayout.h>
+#include "../Includes/PyCXNetwork.h"
+#include "../Includes/CVNetwork.h"
+#include "../Includes/CVNetworkLayoutFR.h"
+#include <Python.h>
+#include "structmember.h"
+
 // #define NO_IMPORT_ARRAY
+// #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #define PY_ARRAY_UNIQUE_SYMBOL heliosFR_ARRAY_API
 #include <numpy/arrayobject.h>
 

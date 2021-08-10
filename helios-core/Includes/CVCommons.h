@@ -297,7 +297,7 @@ CV_INLINE int CV_FastrandInt() {
 }
 CV_INLINE void CVRandomSeed(CVUInteger seed){srandom((unsigned int)seed);}
 CV_INLINE CVUInteger CVRandom() {return random();}
-CV_INLINE CVInteger CVRandomInRange(CVInteger start,CVInteger length){return (CVInteger)start+(CVInteger)(random()%(length));}
+CV_INLINE CVInteger CVRandomInRange(CVInteger start,CVInteger end){return (CVInteger)start+(CVInteger)(random()%(end-start));}
 CV_INLINE CVFloat CVRandomFloat(){return (float)drand48();}
 
 #elif defined(LINUX)
@@ -313,15 +313,15 @@ CV_INLINE int CV_FastrandInt() {
 }
 CV_INLINE void CVRandomSeed(CVUInteger seed){srandom((unsigned int)seed);}
 CV_INLINE CVUInteger CVRandom() {return random();}
-CV_INLINE CVInteger CVRandomInRange(CVInteger start,CVInteger length){return (CVInteger)start+(CVInteger)(random()%(length));}
+CV_INLINE CVInteger CVRandomInRange(CVInteger start,CVInteger end){return (CVInteger)start+(CVInteger)(random()%(end-start));}
 CV_INLINE CVFloat CVRandomFloat(){return (float)drand48();}
 #else
 #warning "Generic random"
 CV_INLINE void CVRandomSeedDev(){srand(time(NULL));}
 CV_INLINE void CVRandomSeed(CVUInteger seed){srand((unsigned int)seed);}
 CV_INLINE CVUInteger CVRandom() {return rand();}
-CV_INLINE CVInteger CVRandomInRange(CVInteger start,CVInteger length){
-	uint32_t n = (uint32_t)length;
+CV_INLINE CVInteger CVRandomInRange(CVInteger start,CVInteger end){
+	uint32_t n = (uint32_t)(end-start);
 	uint32_t limit = RAND_MAX - RAND_MAX % n;
 	uint32_t rnd;
 	do {
@@ -1064,6 +1064,7 @@ if((capacity)<(count)+1){\
 (array)[count-1]=(element);\
 } while (0)
 
+
 //sleep functions
 #if __WIN32__
 #include <windows.h>
@@ -1072,7 +1073,6 @@ if((capacity)<(count)+1){\
 #include <unistd.h>
 #define CVSleepMillisecond(x) usleep((x)*1000)
 #endif
-
 
 #endif
 

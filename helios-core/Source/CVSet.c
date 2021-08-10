@@ -6,7 +6,7 @@
 //  Copyright © 2016 Filipi Nascimento Silva. All rights reserved.
 //
 
-#include "CVSet.h"
+#include "../Includes/CVSet.h"
 
 
 
@@ -725,4 +725,147 @@ CVBool CVEdgeSetIsSupersetOf(const CVEdgeSetRef superSet, const CVEdgeSetRef sub
 	return isSuperset;
 }
 
+
+
+//Pointer
+
+
+
+
+CVPointerSetRef CVNewPointerSet(){
+	return calloc(1, sizeof(CVPointerSet));
+}
+
+CVBool CVPointerSetHas(const CVPointerSetRef set, const void* element){
+	CVPointerSetEntry* entry = NULL;
+	if(set){
+		HASH_FIND(hh, (*set), &element, sizeof(void *), entry);
+	}
+	if(entry){
+		return CVTrue;
+	}else{
+		return CVFalse;
+	}
+}
+
+void CVPointerSetAdd(CVPointerSetRef set, const void* element){
+	CVPointerSetEntry* entry = calloc(1,sizeof(CVPointerSetEntry));
+	entry->element = element;
+	CVPointerSetEntry* entryTemp = NULL;
+	if(set){
+		HASH_FIND(hh, (*set), &(entry->element), sizeof(void *), entryTemp);
+	}
+	if(!entryTemp){
+		HASH_ADD_KEYPTR( hh, (*set), &(entry->element), sizeof(void *), entry);
+	}else{
+		free(entry);
+	}
+}
+
+void CVPointerSetRemove(CVPointerSetRef set, const void * element){
+	CVPointerSetEntry* entryTemp = NULL;
+	if(set){
+		HASH_FIND(hh, (*set), &element, sizeof(void *), entryTemp);
+	}
+	if(entryTemp){
+		HASH_DEL((*set), entryTemp);
+		free(entryTemp);
+	}
+}
+
+void CVPointerSetClear(CVPointerSetRef set){
+	CVPointerSetEntry* entry = NULL;
+	CVPointerSetEntry* entryTemp = NULL;
+	HASH_ITER(hh, (*set), entry, entryTemp) {
+		HASH_DEL((*set), entry);
+		free(entry);
+	}
+}
+
+void CVPointerSetDestroy(CVPointerSetRef set){
+	CVPointerSetClear(set);
+	free(set);
+}
+
+CVPointerSetRef CVNewPointerSetFromUnion(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet){
+	CVPointerSetRef newSet = CVNewPointerSet();
+	CVPointerSetFOR(setEntry, firtSet){
+		CVPointerSetAdd(newSet, setEntry->element);
+	}
+	CVPointerSetFOR(setEntry, secondSet){
+		CVPointerSetAdd(newSet, setEntry->element);
+	}
+	return newSet;
+}
+
+void CVPointerSetUnion(CVPointerSetRef destinationSet, const CVPointerSetRef unionSet){
+	CVPointerSetFOR(setEntry, unionSet){
+		CVPointerSetAdd(destinationSet, setEntry->element);
+	}
+}
+
+CVPointerSetRef CVPointerSetFromIntersection(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet){
+	CVPointerSetRef newSet = CVNewPointerSet();
+	CVPointerSetFOR(setEntry, firtSet){
+		if(CVPointerSetHas(secondSet, setEntry->element)){
+			CVPointerSetAdd(newSet, setEntry->element);
+		}
+	}
+	return newSet;
+}
+
+CVPointerSetRef CVNewPointerSetFromDifference(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet){
+	CVPointerSetRef newSet = CVNewPointerSet();
+	CVPointerSetFOR(setEntry, firtSet){
+		if(!CVPointerSetHas(secondSet, setEntry->element)){
+			CVPointerSetAdd(newSet, setEntry->element);
+		}
+	}
+	return newSet;
+}
+
+CVPointerSetRef CVNewPointerSetFromSymmetricDifference(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet){
+	CVPointerSetRef newSet = CVNewPointerSet();
+	CVPointerSetFOR(setEntry, firtSet){
+		if(!CVPointerSetHas(secondSet, setEntry->element)){
+			CVPointerSetAdd(newSet, setEntry->element);
+		}
+	}
+	CVPointerSetFOR(setEntry, secondSet){
+		if(!CVPointerSetHas(firtSet, setEntry->element)){
+			CVPointerSetAdd(newSet, setEntry->element);
+		}
+	}
+	return newSet;
+}
+
+CVPointerSetRef CVNewPointerSetFromSet(const CVPointerSetRef aSet){
+	CVPointerSetRef newSet = CVNewPointerSet();
+	CVPointerSetFOR(setEntry, aSet){
+		CVPointerSetAdd(newSet, setEntry->element);
+	}
+	return newSet;
+}
+
+CVBool CVPointerSetIsSubsetOf(const CVPointerSetRef subSet, const CVPointerSetRef superSet){
+	CVBool isSubset = CVTrue;
+	CVPointerSetFOR(setEntry, subSet){
+		if(!CVPointerSetHas(superSet, setEntry->element)){
+			isSubset = CVFalse;
+			break;
+		}
+	}
+	return isSubset;
+}
+
+CVBool CVPointerSetIsSupersetOf(const CVPointerSetRef superSet, const CVPointerSetRef subSet){
+	CVBool isSuperset = CVTrue;
+	CVPointerSetFOR(setEntry, subSet){
+		if(!CVPointerSetHas(superSet, setEntry->element)){
+			isSuperset = CVFalse;
+			break;
+		}
+	}
+	return isSuperset;
+}
 

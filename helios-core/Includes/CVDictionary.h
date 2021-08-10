@@ -130,6 +130,7 @@ typedef CVGenericDictionary* CVGenericDictionaryRef;
 #define CVGenericDictionaryFOR(dictionaryEntry,dictionary) for(CVGenericDictionaryEntry* dictionaryEntry=*dictionary; dictionaryEntry != NULL; dictionaryEntry=dictionaryEntry->hh.next)
 
 CVGenericDictionaryRef CVNewGenericDictionary();
+void* CVGenericDictionaryEntryForKey(const CVGenericDictionaryRef dictionary, const void* key, CVSize keysize);
 void* CVGenericDictionarySetEntry(CVGenericDictionaryRef dictionary, const void* key, CVSize keysize, void* data);
 void* CVGenericDictionaryDeleteEntry(CVGenericDictionaryRef dictionary, const void* key, CVSize keysize);
 void* CVGenericDictionaryDeleteAndFreeEntry(CVGenericDictionaryRef dictionary, const void* key, CVSize keysize);

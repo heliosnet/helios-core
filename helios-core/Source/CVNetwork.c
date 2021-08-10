@@ -5,9 +5,9 @@
 //  Created by Filipi Nascimento Silva on 9/22/12.
 //
 //
-#include "CVNetwork.h"
-#include "uthash.h"
-#include "CVGridUtilities.h"
+#include "../Includes/CVNetwork.h"
+#include "../Includes/uthash.h"
+#include "../Includes/CVGridUtilities.h"
 
 
 CVBool CVNetworkAddNewEdges(CVNetwork* network, CVIndex* fromIndices, CVIndex* toIndices, CVFloat* weights, CVSize count){

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Filipi Nascimento Silva. All rights reserved.
 //
 
-#include "CVSimpleQueue.h"
+#include "../Includes/CVSimpleQueue.h"
 
 
 CV_INLINE CVQueueNode* getNodeFromPool(CVQueue* queue){

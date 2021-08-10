@@ -1,30 +1,31 @@
 #!/usr/bin/env python3
 
 from setuptools import setup, Extension, Command
-import os.path;
-import platform;
-enableParallelism = True;
+import os.path
+from os.path import join as PJ
+import platform
+enableParallelism = True
 
 extraOptions = []
 extraLinkOptions=[]
 if(platform.system()=="Darwin"):
-	extraOptions = ["-D OSX"];
+	extraOptions = ["-D OSX"]
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_LIBDISPATCH=1"];
+		extraOptions += ["-DCV_USE_LIBDISPATCH=1"]
 elif(platform.system()=="Windows"):
-	extraOptions = ["-D WIN32 -lpthread"];
+	extraOptions = ["-D WIN32 -lpthread"]
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
-		extraLinkOptions+=["-lgomp"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"]
+		extraLinkOptions+=["-lgomp"]
 elif(platform.system()=="Linux"):
-	extraOptions = ["-D Linux","-D_GNU_SOURCE=1"];
+	extraOptions = ["-D Linux","-D_GNU_SOURCE=1"]
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
-		extraLinkOptions+=["-lgomp"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"]
+		extraLinkOptions+=["-lgomp"]
 else:
 	if(enableParallelism):
-		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"];
-		extraLinkOptions+=["-lgomp"];
+		extraOptions += ["-DCV_USE_OPENMP=1","-fopenmp"]
+		extraLinkOptions+=["-lgomp"]
 
 # WORKAROUND: https://stackoverflow.com/questions/54117786/add-numpy-get-include-argument-to-setuptools-without-preinstalled-numpy
 class get_numpy_include(object):
@@ -39,17 +40,17 @@ with open("README.md", "r") as fh:
 
 building_on_windows = platform.system() == "Windows"
 
-with open(os.path.join("helios-core","Python", "PyCXVersion.h"),"rt") as fd:
+with open(PJ("helios-core","Includes", "PyCXVersion.h"),"rt") as fd:
 	version = fd.readline().strip().split(" ")[-1]
 
-print("Compiling version %s"%version);
+print("Compiling version %s"%version)
 setup(
 	name="heliosFR",
 	version=version,
 	author="Filipi N. Silva",
 	author_email="filsilva@iu.edu",
 	compiler = "mingw32" if building_on_windows else None,
-  setup_requires=['wheel',"numpy"],
+  setup_requires=['wheel',"oldest-supported-numpy"],
 	description="Experimental library to visualize complex networks",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
@@ -71,17 +72,16 @@ setup(
 		Extension(
 			"heliosFR",
 			sources=[
-				os.path.join("helios-core","Source", "CVSimpleQueue.c"),
-				os.path.join("helios-core","Source", "CVSet.c"),
-				os.path.join("helios-core","Source", "CVNetwork.c"),
-				os.path.join("helios-core","Source", "CVDictionary.c"),
-				os.path.join("helios-core","Source", "CVNetworkLayout.c"),
-				os.path.join("helios-core","Python", "PyCXNetwork.c"),
-				os.path.join("helios-core","Python", "PyCXBind.c"),
+				PJ("helios-core","Source", "CVSimpleQueue.c"),
+				PJ("helios-core","Source", "CVSet.c"),
+				PJ("helios-core","Source", "CVNetwork.c"),
+				PJ("helios-core","Source", "CVDictionary.c"),
+				PJ("helios-core","Source", "CVNetworkLayoutFR.c"),
+				PJ("helios-core","Python", "PyCXNetwork.c"),
+				PJ("helios-core","Python", "PyCXBind.c"),
 			],
 			include_dirs=[
-				os.path.join("helios-core","Source"),
-				os.path.join("helios-core","Python"),
+				PJ("helios-core","Source"),
 				get_numpy_include()
 			],
 			extra_compile_args=[
@@ -102,4 +102,4 @@ setup(
 			extra_link_args=extraLinkOptions,
 		),
 	]
-);
+)

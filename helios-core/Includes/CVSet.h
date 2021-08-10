@@ -22,7 +22,8 @@ typedef struct {
 typedef CVStringSetEntry* CVStringSet;
 typedef CVStringSet* CVStringSetRef;
 
-#define CVStringSetFOR(setEntry,set) for(CVStringSetEntry* setEntry=*set; setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVStringSetFOR(setEntry,set) for(CVStringSetEntry* setEntry=*(set); setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVStringSetIsEmpty(set) (*(set) != NULL)
 
 CVStringSetRef CVNewStringSet();
 CVBool CVStringSetHas(const CVStringSetRef set, const CVString key);
@@ -55,7 +56,8 @@ typedef struct {
 typedef CVIntegerSetEntry* CVIntegerSet;
 typedef CVIntegerSet* CVIntegerSetRef;
 
-#define CVIntegerSetFOR(setEntry,set) for(CVIntegerSetEntry* setEntry=*set; setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVIntegerSetFOR(setEntry,set) for(CVIntegerSetEntry* setEntry=*(set); setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVIntegerSetIsEmpty(set) (*set == NULL)
 
 
 CVIntegerSetRef CVNewIntegerSet();
@@ -87,7 +89,8 @@ typedef struct {
 typedef CVUIntegerSetEntry* CVUIntegerSet;
 typedef CVUIntegerSet* CVUIntegerSetRef;
 
-#define CVUIntegerSetFOR(setEntry,set) for(CVUIntegerSetEntry* setEntry=*set; setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVUIntegerSetFOR(setEntry,set) for(CVUIntegerSetEntry* setEntry=*(set); setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVUIntegerSetIsEmpty(set) (*set == NULL)
 
 
 CVUIntegerSetRef CVNewUIntegerSet();
@@ -121,7 +124,8 @@ typedef struct {
 typedef CVEdgeSetEntry* CVEdgeSet;
 typedef CVEdgeSet* CVEdgeSetRef;
 
-#define CVEdgeSetFOR(setEntry,set) for(CVEdgeSetEntry* setEntry=*set; setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVEdgeSetFOR(setEntry,set) for(CVEdgeSetEntry* setEntry=*(set); setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVEdgeSetIsEmpty(set) (*set == NULL)
 
 CVEdgeSetRef CVNewEdgeSet();
 CVBool CVEdgeSetHas(const CVEdgeSetRef set, const CVEdge key);
@@ -154,6 +158,63 @@ typedef CVGenericSetEntry* CVGenericSet;
 typedef CVGenericSet* CVGenericSetRef;
 
 #define CVGenericSetFOR(setEntry,set) for(CVGenericSetEntry* setEntry=*set; setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVGenericSetIsEmpty(set) (*set == NULL)
+
+CVGenericSetRef CVNewGenericSet();
+CVBool CVGenericSetHas(const CVGenericSetRef set, const void* element, CVSize elementSize);
+void CVGenericSetAdd(CVGenericSetRef set, const void* element, CVSize elementSize);
+void CVGenericSetRemove(CVGenericSetRef set, const void* element, CVSize elementSize);
+void CVGenericSetClear(CVGenericSetRef set);
+void CVGenericSetDestroy(CVGenericSetRef set);
+CVGenericSetRef CVNewGenericSetFromUnion(const CVGenericSetRef firtSet, const CVGenericSetRef secondSet);
+void CVGenericSetUnion(CVGenericSetRef destinationSet, const CVGenericSetRef unionSet);
+CVGenericSetRef CVNewGenericSetFromIntersection(const CVGenericSetRef firtSet, const CVGenericSetRef secondSet);
+CVGenericSetRef CVNewGenericSetFromDifference(const CVGenericSetRef firtSet, const CVGenericSetRef secondSet);
+CVGenericSetRef CVNewGenericSetFromSymmetricDifference(const CVGenericSetRef firtSet, const CVGenericSetRef secondSet);
+CVGenericSetRef CVNewGenericSetFromSet(const CVGenericSetRef aSet);
+CVBool CVGenericSetIsSubsetOf(const CVGenericSetRef subSet, const CVGenericSetRef superSet);
+CVBool CVGenericSetIsSupersetOf(const CVGenericSetRef superSet, const CVGenericSetRef subSet);
+
+CV_INLINE CVSize CVGenericSetCount(CVGenericSetRef aSet){
+	return (CVSize)HASH_COUNT((*aSet));
+}
+
+
+
+
+
+typedef struct {
+	const void * element;
+	UT_hash_handle hh;
+} CVPointerSetEntry;
+
+typedef CVPointerSetEntry* CVPointerSet;
+typedef CVPointerSet* CVPointerSetRef;
+
+#define CVPointerSetFOR(setEntry,set) for(CVPointerSetEntry* setEntry=*(set); setEntry != NULL; setEntry=setEntry->hh.next)
+#define CVPointerSetIsEmpty(set) (*set == NULL)
+
+
+CVPointerSetRef CVNewPointerSet();
+CVBool CVPointerSetHas(const CVPointerSetRef set, const void * key);
+void CVPointerSetAdd(CVPointerSetRef set, const void * element);
+void CVPointerSetRemove(CVPointerSetRef set, const void * element);
+void CVPointerSetClear(CVPointerSetRef set);
+void CVPointerSetDestroy(CVPointerSetRef set);
+CVPointerSetRef CVNewPointerSetFromUnion(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet);
+void CVPointerSetUnion(CVPointerSetRef destinationSet, const CVPointerSetRef unionSet);
+CVPointerSetRef CVNewPointerSetFromIntersection(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet);
+CVPointerSetRef CVNewPointerSetFromDifference(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet);
+CVPointerSetRef CVNewPointerSetFromSymmetricDifference(const CVPointerSetRef firtSet, const CVPointerSetRef secondSet);
+CVPointerSetRef CVNewPointerSetFromSet(const CVPointerSetRef aSet);
+CVBool CVPointerSetIsSubsetOf(const CVPointerSetRef subSet, const CVPointerSetRef superSet);
+CVBool CVPointerSetIsSupersetOf(const CVPointerSetRef superSet, const CVPointerSetRef subSet);
+
+CV_INLINE CVSize CVPointerSetCount(CVPointerSetRef aSet){
+	return (CVSize)HASH_COUNT((*aSet));
+}
+
+
 
 
 

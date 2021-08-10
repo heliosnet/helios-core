@@ -1,24 +1,7 @@
 
-#include "CVNetwork.h"
-
-// static inline void __recenterNetworkPositions(float* Rx,float* Ry,float* Rz,CVSize count){
-// 	double aRMx=0;
-// 	double aRMy=0;
-// 	double aRMz=0;
-// 	int i=0;
-// 	double invertexf = 1/(double)count;
-// 	for(i=0;i<count;i++){
-// 		aRMx+=Rx[i]*invertexf;
-// 		aRMy+=Ry[i]*invertexf;
-// 		aRMz+=Rz[i]*invertexf;
-// 	}
-	
-// 	for(i=0;i<count;i++){
-// 		Rx[i]-=aRMx;
-// 		Ry[i]-=aRMy;
-// 		Rz[i]-=aRMz;
-// 	}
-// }//////
+#include "../Includes/CVNetwork.h"
+#include "../Includes/PyCXVersion.h"
+#include "../Includes/CVNetworkLayoutFR.h"
 
 
 void CVNetworkRadiusRecenter(CVFloat* R, CVSize vcount){

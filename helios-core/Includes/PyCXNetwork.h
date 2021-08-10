@@ -2,7 +2,7 @@
 #define __PYCXNETWORK_H__
 
 #include <Python.h>
-#include <CVNetwork.h>
+#include "../Includes/CVNetwork.h"
 
 
 

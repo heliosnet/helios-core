@@ -6,7 +6,7 @@
 //  Copyright © 2016 Filipi Nascimento Silva. All rights reserved.
 //
 
-#include "CVDictionary.h"
+#include "../Includes/CVDictionary.h"
 
 
 CVStringDictionaryRef CVNewStringDictionary(){
