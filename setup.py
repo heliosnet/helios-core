@@ -78,7 +78,7 @@ setup(
 				PJ("helios-core","Source", "CVDictionary.c"),
 				PJ("helios-core","Source", "CVNetworkLayoutFR.c"),
 				PJ("helios-core","Python", "PyCXNetwork.c"),
-				PJ("helios-core","Python", "PyCXBind.c"),
+				PJ("helios-core","Python", "PyCXLayout.c"),
 			],
 			include_dirs=[
 				PJ("helios-core","Source"),
